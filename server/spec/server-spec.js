@@ -6,21 +6,25 @@ var request = require("request"); // You might need to npm install the request m
 var expect = require('../../node_modules/chai/chai').expect;
 
 describe("Persistent Node Chat Server", function() {
+
   var dbConnection;
 
   beforeEach(function(done) {
+
     dbConnection = mysql.createConnection({
       user: "root",
       password: "",
       database: "chat"
     });
+
     dbConnection.connect();
 
-       var tablename = "messages"; // TODO: fill this out
+    var tablename = "messages"; // TODO: fill this out
 
     /* Empty the db table before each test so that multiple tests
      * (or repeated runs of the tests) won't screw each other up: */
     dbConnection.query("truncate " + tablename, done);
+
   });
 
   afterEach(function() {
@@ -55,7 +59,7 @@ describe("Persistent Node Chat Server", function() {
           expect(results.length).to.equal(1);
 
           // TODO: If you don't have a column named text, change this test.
-          expect(results[0].text).to.equal("In mercy's name, three days is all I need.");
+          expect(results[0].message).to.equal("In mercy's name, three days is all I need.");
 
           done();
         });

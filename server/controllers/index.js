@@ -4,22 +4,26 @@ var bluebird = require('bluebird');
 module.exports = {
   messages: {
     get: function (req, res) {
-
-      models.messages.get(function (result) {
-        res.end(JSON.stringify(result));
+      models.messages.get(function (results) {
+        res.end(JSON.stringify({ results : results }));
       });
-
-    }, // a function which handles a get request for all messages
+    },
     post: function (req, res) {
-
-    } // a function which handles posting a message to the database
+      models.messages.post(req.body, function (results) {
+        res.end(JSON.stringify({ results : results }));
+      });
+    }
   },
   users: {
     get: function (req, res) {
-      res.send("users get");
+      models.users.get(function (results) {
+        res.end(JSON.stringify(results));
+      });
     },
     post: function (req, res) {
-      
+      models.users.post(req.body, function (results) {
+        res.end(JSON.stringify(results));
+      });
     }
   }
 };

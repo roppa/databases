@@ -4,12 +4,12 @@ USE chat;
 
 create table rooms (
   id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
-  name VARCHAR(20)
+  roomname VARCHAR(20)
 );
 
 create table users (
   id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
-  name VARCHAR(20)
+  username VARCHAR(20)
 );
 
 create table messages (
