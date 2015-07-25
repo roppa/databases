@@ -9,24 +9,45 @@ module.exports = {
       });
     }, // a function which produces all the messages
     post: function (postData, cb) {
-
       //find out if user exists
-      db.query('SELECT id FROM users WHERE username = "' + postData.username + '"', function(err, results) {
+      db.query('SELECT id FROM users WHERE username = "' + postData.username + '"', function(err, userResults) {
         if (err) throw err;
 
-        if (results[0]) {
-          db.query('INSERT INTO messages (user_id, message, room_id) VALUES (' + results[0].id + ', "' + postData.message + '", ' + postData.room_id + ')', function (err, result) {
+        //if user exists, post message
+        if (userResults[0]) {
+
+          //if room exists, get id
+          db.query('SELECT id FROM rooms WHERE roomname = "' + postData.roomname + '"', function(err, roomResults) {
             if (err) throw err;
-            cb(result);
+            if (roomResults[0]) {
+              //finally
+              db.query('INSERT INTO messages (user_id, message, room_id) VALUES (' + userResults[0].id + ', "' + postData.message + '", ' + roomResults[0].id + ')', function (err, result) {
+                if (err) throw err;
+                cb(result);
+              });
+            } else {
+              //create room
+              module.exports.rooms.post(postData, function (err, result) {
+                var newPostData;
+                if (err) throw err;
+                if (result.insertId) {
+                  newPostData = { user_id : result.user_id, message : postData.message, room_id : result.insertId };
+                  module.exports.messages.post(newPostData, cb);
+                }
+              });
+            }
           });
-          cb("user id is " + results[0].id);
-        } else {
+
+        } else { //user doesnt exist, lets create them
           module.exports.users.post(postData, function (err, result) {
-            //module.exports.messages.post(postData, );
+            var newPostData;
+            if (err) throw err;
+            if (result.insertId) {
+              newPostData = { user_id : result.insertId, message : postData.message, room_id : postData.room_id };
+              module.exports.messages.post(newPostData, cb);
+            }
           });
-          cb("must be undefined");
         }
-        //cb(JSON.stringify(results[0]));
 
       });
 
@@ -49,6 +70,14 @@ module.exports = {
     }
   },
 
+  rooms : {
+    get: function (cb) {
+
+    },
+    post: function (postData, cb) {
+
+    }
+  }
 
 };
 
