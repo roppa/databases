@@ -5,7 +5,7 @@ $(function() {
   app = {
 //TODO: The current 'addFriend' function just adds the class 'friend'
 //to all messages sent by the user
-    server: 'http://localhost:3000/classes/messages',
+    server: 'http://localhost:3000/classes/messages/',
     username: 'anonymous',
     roomname: 'lobby',
     lastMessageId: 0,
@@ -29,7 +29,7 @@ $(function() {
 
       // Fetch previous messages
       app.startSpinner();
-      app.fetch(false);
+      app.fetch(true);
 
       // Poll for new messages
       setInterval(app.fetch, 3000);
@@ -62,7 +62,7 @@ $(function() {
         contentType: 'application/json',
         data: { order: '-createdAt'},
         success: function(data) {
-          console.log('chatterbox: Messages fetched');
+          console.log(data);
 
           // Don't bother if we have nothing to work with
           if (!data.results || !data.results.length) { return; }
@@ -158,7 +158,7 @@ $(function() {
           $username.addClass('friend');
 
         var $message = $('<br><span/>');
-        $message.text(data.text).appendTo($chat);
+        $message.text(data.message).appendTo($chat);
 
         // Add the message to the UI
         app.$chats.append($chat);
@@ -211,7 +211,7 @@ $(function() {
     handleSubmit: function(evt) {
       var message = {
         username: app.username,
-        text: app.$message.val(),
+        message: app.$message.val(),
         roomname: app.roomname || 'lobby'
       };
 
