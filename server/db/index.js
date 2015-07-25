@@ -7,4 +7,6 @@ var connection = mysql.createConnection({
   database : 'chatterbox'
 });
 
+connection.connect();
+
 module.exorts = connection;
